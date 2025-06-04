@@ -17,6 +17,7 @@ public class PetStoreApiTest {
 
         RestAssured.given()
                 .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
                 .body(petJson)
                 .when()
                 .post("https://petstore.swagger.io/v2/pet")
@@ -26,6 +27,7 @@ public class PetStoreApiTest {
 
         // 2. Получаем питомца и проверяем данные
         RestAssured.given()
+                .accept(ContentType.JSON)
                 .when()
                 .get("https://petstore.swagger.io/v2/pet/123")
                 .then()
@@ -37,6 +39,7 @@ public class PetStoreApiTest {
     @Test
     public void testDeletePet() {
         RestAssured.given()
+                .accept(ContentType.JSON)
                 .when()
                 .delete("https://petstore.swagger.io/v2/pet/123")
                 .then()
@@ -44,6 +47,7 @@ public class PetStoreApiTest {
 
         // Проверяем, что питомец удалён
         RestAssured.given()
+                .accept(ContentType.JSON)
                 .when()
                 .get("https://petstore.swagger.io/v2/pet/123")
                 .then()
