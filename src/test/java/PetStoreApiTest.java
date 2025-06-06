@@ -10,7 +10,7 @@ public class PetStoreApiTest {
     public void testAddAndGetPet() {
         // 1. Добавляем питомца
         String petJson = "{\n" +
-                "  \"id\": 123,\n" +
+                "  \"id\": 987654,\n" +
                 "  \"name\": \"Rex\",\n" +
                 "  \"status\": \"available\"\n" +
                 "}";
@@ -29,10 +29,10 @@ public class PetStoreApiTest {
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .when()
-                .get("https://petstore.swagger.io/v2/pet/123")
+                .get("https://petstore.swagger.io/v2/pet/987654")
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(123))
+                .body("id", equalTo(987654))
                 .body("status", equalTo("available"));
     }
 
@@ -41,7 +41,7 @@ public class PetStoreApiTest {
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .when()
-                .delete("https://petstore.swagger.io/v2/pet/123")
+                .delete("https://petstore.swagger.io/v2/pet/987654")
                 .then()
                 .statusCode(200);
 
@@ -49,7 +49,7 @@ public class PetStoreApiTest {
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .when()
-                .get("https://petstore.swagger.io/v2/pet/123")
+                .get("https://petstore.swagger.io/v2/pet/987654")
                 .then()
                 .statusCode(404);
     }
