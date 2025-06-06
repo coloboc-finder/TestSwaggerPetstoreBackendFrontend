@@ -8,7 +8,6 @@ public class PetStoreApiTest {
 
     @org.junit.jupiter.api.Test
     public void testAddAndGetPet() {
-        // 1. Добавляем питомца
         String petJson = "{\n" +
                 "  \"id\": 987654,\n" +
                 "  \"name\": \"Rex\",\n" +
@@ -25,7 +24,6 @@ public class PetStoreApiTest {
                 .statusCode(200)
                 .body("name", equalTo("Rex"));
 
-        // 2. Получаем питомца и проверяем данные
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .when()
@@ -45,7 +43,6 @@ public class PetStoreApiTest {
                 .then()
                 .statusCode(200);
 
-        // Проверяем, что питомец удалён
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .when()
