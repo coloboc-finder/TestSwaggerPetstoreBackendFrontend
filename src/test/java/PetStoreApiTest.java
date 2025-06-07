@@ -1,52 +1,83 @@
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import static org.hamcrest.Matchers.equalTo;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
 public class PetStoreApiTest {
 
-    @org.junit.jupiter.api.Test
-    public void testAddAndGetPet() {
-        String petJson = "{\n" +
-                "  \"id\": 987654,\n" +
-                "  \"name\": \"Rex\",\n" +
-                "  \"status\": \"available\"\n" +
-                "}";
+    private static final String BASE_URL = "https://petstore.swagger.io/v2";
+    private static final String PET_NAME = "Rex";
+    private static final String PET_STATUS = "available";
+    private static int testPetId;
 
-        RestAssured.given()
+    @BeforeAll
+    public static void setup() {
+        RestAssured.baseURI = BASE_URL;
+    }
+
+    @BeforeEach
+    public void createTestPet() throws InterruptedException {
+        testPetId = (int) (System.currentTimeMillis() % 1000000);
+
+        given()
                 .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body(petJson)
+                .body(String.format(
+                        "{\"id\": %d, \"name\": \"%s\", \"status\": \"%s\"}",
+                        testPetId, PET_NAME, PET_STATUS))
                 .when()
-                .post("https://petstore.swagger.io/v2/pet")
+                .post("/pet")
                 .then()
-                .statusCode(200)
-                .body("name", equalTo("Rex"));
+                .statusCode(200);
 
-        RestAssured.given()
+        Thread.sleep(3000);
+    }
+
+    @AfterEach
+    public void cleanupTestPet() {
+        try {
+            given()
+                    .when()
+                    .delete("/pet/" + testPetId);
+        } catch (Exception e) {
+            System.out.println("Cleanup failed for pet: " + testPetId);
+        }
+    }
+
+    @Test
+    public void testGetPet() {
+        given()
                 .accept(ContentType.JSON)
                 .when()
-                .get("https://petstore.swagger.io/v2/pet/987654")
+                .get("/pet/" + testPetId)
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(987654))
-                .body("status", equalTo("available"));
+                .body("id", equalTo(testPetId))
+                .body("name", equalTo(PET_NAME))
+                .body("status", equalTo(PET_STATUS));
     }
 
     @Test
     public void testDeletePet() {
-        RestAssured.given()
+        given()
                 .accept(ContentType.JSON)
                 .when()
-                .delete("https://petstore.swagger.io/v2/pet/987654")
+                .get("/pet/" + testPetId)
                 .then()
                 .statusCode(200);
 
-        RestAssured.given()
+        given()
                 .accept(ContentType.JSON)
                 .when()
-                .get("https://petstore.swagger.io/v2/pet/987654")
+                .delete("/pet/" + testPetId)
+                .then()
+                .statusCode(200);
+
+        given()
+                .accept(ContentType.JSON)
+                .when()
+                .get("/pet/" + testPetId)
                 .then()
                 .statusCode(404);
     }
