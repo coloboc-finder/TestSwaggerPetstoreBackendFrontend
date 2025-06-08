@@ -18,8 +18,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     implementation 'org.aspectj:aspectjrt:1.9.19'
     testImplementation 'io.rest-assured:rest-assured:5.4.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testImplementation 'io.qameta.allure:allure-junit5:2.25.0'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+
 }
 
 test {

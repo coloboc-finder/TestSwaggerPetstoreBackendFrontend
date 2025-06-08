@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
 
 public class PetStoreApiTest {
 
@@ -19,9 +22,10 @@ public class PetStoreApiTest {
 
     @BeforeEach
     public void createTestPet() throws InterruptedException {
-        testPetId = (int) (System.currentTimeMillis() % 1000000);
+        testPetId = (int) (System.nanoTime() % 1000000);
 
         given()
+                .log().all()
                 .contentType(ContentType.JSON)
                 .body(String.format(
                         "{\"id\": %d, \"name\": \"%s\", \"status\": \"%s\"}",
@@ -31,18 +35,40 @@ public class PetStoreApiTest {
                 .then()
                 .statusCode(200);
 
-        Thread.sleep(3000);
+        waitForPetCreation(testPetId);
     }
 
     @AfterEach
     public void cleanupTestPet() {
         try {
             given()
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .header("Pragma", "no-cache")
                     .when()
-                    .delete("/pet/" + testPetId);
+                    .delete("/pet/" + testPetId)
+                    .then()
+                    .statusCode(anyOf(is(200), is(404))); // 404 тоже допустим
         } catch (Exception e) {
             System.out.println("Cleanup failed for pet: " + testPetId);
         }
+    }
+
+    private void waitForPetCreation(int petId) {
+        await()
+                .atMost(15, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    given()
+                            .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                            .header("Pragma", "no-cache")
+                            .log().all()
+                            .accept(ContentType.JSON)
+                            .when()
+                            .get("/pet/" + petId)
+                            .then()
+                            .statusCode(200)
+                            .body("id", equalTo(petId));
+                });
     }
 
     @Test
@@ -74,17 +100,24 @@ public class PetStoreApiTest {
                 .then()
                 .statusCode(200);
 
-        given()
-                .accept(ContentType.JSON)
-                .when()
-                .get("/pet/" + testPetId)
-                .then()
-                .statusCode(404);
+        await()
+                .atMost(5, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    given()
+                            .accept(ContentType.JSON)
+                            .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                            .header("Pragma", "no-cache")
+                            .when()
+                            .get("/pet/" + testPetId)
+                            .then()
+                            .statusCode(404);
+                });
     }
 
     @Test
     public void testGetNonExistentPet() {
-        int nonExistentPetId = 999999999;
+        int nonExistentPetId = Integer.MAX_VALUE;
 
         given()
                 .accept(ContentType.JSON)
@@ -96,7 +129,7 @@ public class PetStoreApiTest {
 
     @Test
     public void testDeleteNonExistentPet() {
-        int nonExistentPetId = 999999999;
+        int nonExistentPetId = Integer.MAX_VALUE;
 
         given()
                 .accept(ContentType.JSON)
