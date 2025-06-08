@@ -81,4 +81,28 @@ public class PetStoreApiTest {
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    public void testGetNonExistentPet() {
+        int nonExistentPetId = 999999999;
+
+        given()
+                .accept(ContentType.JSON)
+                .when()
+                .get("/pet/" + nonExistentPetId)
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void testDeleteNonExistentPet() {
+        int nonExistentPetId = 999999999;
+
+        given()
+                .accept(ContentType.JSON)
+                .when()
+                .delete("/pet/" + nonExistentPetId)
+                .then()
+                .statusCode(404);
+    }
 }
