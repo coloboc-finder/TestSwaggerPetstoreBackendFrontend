@@ -6,27 +6,20 @@ public class TestPetstore {
 
     @Test
     void testPetstore() {
+
+        int testPetId = (int)(System.nanoTime()%100000);
+
         open("https://petstore.swagger.io/");
 
-        $("a[href='#/pet/getPetById']")
-                .shouldBe(Condition.visible)
-                .click();
+        $("a[href='#/pet/getPetById']").shouldBe(Condition.visible).click();
 
-        $(".btn.try-out__btn")
-                .shouldBe(Condition.visible)
-                .click();
+        $(".btn.try-out__btn").shouldBe(Condition.visible).click();
 
-        $("input[placeholder='petId']")
-                .setValue("123")
-                .click();
+        $("input[placeholder='petId']").setValue(String.valueOf(testPetId)).click();
 
-        $("button.execute")
-                .shouldBe(Condition.visible)
-                .click();
+        $("button.execute").shouldBe(Condition.visible).click();
 
-        $("pre.microlight")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.text("/123"));
+        $("pre.microlight").shouldBe(Condition.visible).shouldHave(Condition.text("/" + testPetId));
     }
 
 }
