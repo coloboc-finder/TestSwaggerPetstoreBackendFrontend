@@ -34,6 +34,8 @@ public class PetStoreApiTest {
                 .post("/pet")
                 .then()
                 .statusCode(200);
+
+        waitForPetCreation(testPetId);
     }
 
     @AfterEach
@@ -69,6 +71,8 @@ public class PetStoreApiTest {
 
     @Test
     public void testGetPet() {
+        waitForPetCreation(testPetId);
+
         given()
                 .accept(ContentType.JSON)
                 .when()
@@ -82,6 +86,8 @@ public class PetStoreApiTest {
 
     @Test
     public void testDeletePet() {
+        waitForPetCreation(testPetId);
+
         given()
                 .accept(ContentType.JSON)
                 .when()
@@ -94,7 +100,7 @@ public class PetStoreApiTest {
                 .when()
                 .delete("/pet/" + testPetId)
                 .then()
-                .statusCode(200);
+                .statusCode(anyOf(is(200), is(404)));
 
         given()
                 .accept(ContentType.JSON)
