@@ -53,7 +53,7 @@ public class PetStoreApiPetCreationTest {
                     .when()
                     .delete("/pet/" + testPetId)
                     .then()
-                    .statusCode(anyOf(is(200), is(404))); // 404 тоже допустим
+                    .statusCode(anyOf(is(200), is(404)));
         } catch (Exception e) {
             System.out.println("Cleanup failed for pet: " + testPetId);
         }
