@@ -1,3 +1,5 @@
+package backend;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
@@ -51,24 +53,7 @@ public class PetStoreApiTest {
         }
     }
 
-    private void waitForPetCreation(int petId) {
-        await()
-                .atMost(15, TimeUnit.SECONDS)
-                .pollInterval(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    given()
-                            .header("Cache-Control", "no-cache, no-store, must-revalidate")
-                            .header("Pragma", "no-cache")
-                            .log().all()
-                            .accept(ContentType.JSON)
-                            .when()
-                            .get("/pet/" + petId)
-                            .then()
-                            .statusCode(200)
-                            .body("id", equalTo(petId));
-                });
-    }
-
+    @Tag("flaky")
     @Test
     public void testGetPet() {
         waitForPetCreation(testPetId);
@@ -84,6 +69,7 @@ public class PetStoreApiTest {
                 .body("status", equalTo(PET_STATUS));
     }
 
+    @Tag("flaky")
     @Test
     public void testDeletePet() {
         waitForPetCreation(testPetId);
@@ -132,5 +118,23 @@ public class PetStoreApiTest {
                 .delete("/pet/" + nonExistentPetId)
                 .then()
                 .statusCode(404);
+    }
+
+    private void waitForPetCreation(int petId) {
+        await()
+                .atMost(15, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    given()
+                            .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                            .header("Pragma", "no-cache")
+                            .log().all()
+                            .accept(ContentType.JSON)
+                            .when()
+                            .get("/pet/" + petId)
+                            .then()
+                            .statusCode(200)
+                            .body("id", equalTo(petId));
+                });
     }
 }
