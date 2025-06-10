@@ -16,6 +16,7 @@ public class PetStoreApiTest {
     private static final String PET_NAME = "Rex";
     private static final String PET_STATUS = "available";
     private static int testPetId;
+    private static final int PET_ID_RANGE = 100000;
 
     @BeforeAll
     public static void setup() {
@@ -24,7 +25,7 @@ public class PetStoreApiTest {
 
     @BeforeEach
     public void createTestPet() throws InterruptedException {
-        testPetId = (int) (System.nanoTime() % 1000000);
+        testPetId = (int) (System.nanoTime() % PET_ID_RANGE);
 
         given()
                 .log().all()
