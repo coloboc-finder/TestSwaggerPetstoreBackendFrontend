@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Selenide.*;
 public class TestPetstore {
     private static final int PET_ID_RANGE = 100000;
 
+
     @Test
     void testPetstore() {
 
