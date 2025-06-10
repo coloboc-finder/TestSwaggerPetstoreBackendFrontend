@@ -121,21 +121,25 @@ public class TestPetstore {
         deletePetById(testPetId);
 
         $("a[href='#/pet/getPetById']")
-                .shouldBe(visible)
+                .shouldBe(visible, enabled)
+                .scrollIntoView(true);
+        sleep(300);
+        $("a[href='#/pet/getPetById']")
                 .click();
-        $(".btn.try-out__btn")
-                .shouldBe(visible)
+        $$("div.opblock")
+                .findBy(text("ID of pet to return"))
+                .$("button.try-out__btn")
                 .click();
         $("input[placeholder='petId']")
                 .shouldBe(visible, Duration.ofSeconds(10))
                 .shouldBe(enabled)
                 .setValue(String.valueOf(testPetId));
-        $("button.execute")
-                .shouldBe(visible)
+        $("#operations-pet-getPetById")
+                .$$("button")
+                .findBy(text("Execute"))
                 .click();
-        $("pre.microlight")
-                .shouldBe(visible)
-                .shouldHave(text("Pet not found"));
+        $$("p")
+                .findBy(text("Error: response status is 404"));
     }
 
     private void fillOutPetForms(int testPetId, String PET_NAME, String PET_STATUS) {
@@ -191,12 +195,14 @@ public class TestPetstore {
         sleep(300);
         $("a[href='#/pet/deletePet']")
                 .click();
-        $(".btn.try-out__btn")
-                .shouldBe(visible)
+        $$("div.opblock")
+                .findBy(text("Pet id to delete"))
+                .$("button.try-out__btn")
                 .click();
+        sleep(3000);
         $("input[placeholder='petId']")
-                .should(appear)
-                .shouldBe(visible, enabled)
+                .should(appear, Duration.ofSeconds(10))
+                .shouldBe(visible, Duration.ofSeconds(10))
                 .setValue(String.valueOf(testPetId));
         $("button.execute")
                 .shouldBe(visible, enabled)
