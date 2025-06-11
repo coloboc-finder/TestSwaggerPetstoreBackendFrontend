@@ -10,7 +10,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
-public class PetStoreApiTest {
+public class PetCrudApiTest {
 
     private static final String BASE_URL = "https://petstore.swagger.io/v2";
     private static final String PET_NAME = "Rex";
