@@ -11,7 +11,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Condition.*;
 
-public class TestPetstore {
+public class PetStoreUiTest {
     private static final String BASE_URL = "https://petstore.swagger.io";
     private static final int PET_ID_RANGE = 100000;
     private static final String PET_NAME = "Batman";
